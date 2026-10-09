@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="color-scheme" content="light only">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project Architecture</title>
+<meta name="description" content="End to end Projects Deployed & Documented Try it out.">
+<style>
+  :root { --ink:#1a1a1a; --muted:#767676; --line:#e6e6e6; }
+  * { box-sizing:border-box; }
+  [hidden] { display:none !important; }
+  body { margin:0; background:#fff; color:var(--ink); font-size:19px; line-height:1.7;
+    font-family:"Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, "Times New Roman", serif; }
+  a { color:inherit; text-decoration:none; }
+  .wrap { max-width:660px; margin:0 auto; padding:40px 24px 80px; }
+
+  /* top bar: Home | search | Updates */
+  .bar { display:grid; grid-template-columns:1fr minmax(0,240px) 1fr; align-items:center; gap:16px;
+    padding-bottom:20px; border-bottom:1px solid var(--line); }
+  .home { justify-self:start; font-size:17px; }
+  .updates { justify-self:end; font-size:20px; font-weight:700; text-align:right; }
+  .home:hover, .updates:hover { text-decoration:underline; }
+  #q { width:100%; padding:6px 12px; font-family:inherit; font-style:italic; font-size:16px; line-height:1.5;
+    color:var(--ink); background:#fff; border:1px solid var(--line); border-radius:999px; text-align:center; }
+  #q:focus-visible, .home:focus-visible, .updates:focus-visible, .name:focus-visible, .try:focus-visible {
+    outline:2px solid var(--ink); outline-offset:3px; }
+
+  .lede { margin:48px 0 8px; color:var(--muted); font-style:italic; font-size:18px; }
+
+  /* sections */
+  h2 { font-size:28px; line-height:1.3; margin:40px 0 8px; }
+  ul { list-style:none; margin:0; padding:0; border-top:1px solid var(--line); }
+  .post { display:grid; grid-template-columns:8.5rem 1fr auto; gap:16px; align-items:start; padding:14px 0;
+    border-bottom:1px solid var(--line); }
+  .name:hover { text-decoration:underline; text-underline-offset:4px; }
+  .try { align-self:center; white-space:nowrap; padding:4px 14px; font-size:15px; line-height:1.5;
+    border:1px solid var(--ink); border-radius:999px; }
+  .try:hover { background:var(--ink); color:#fff; }
+  .date { color:var(--muted); font-size:16px; font-variant-numeric:oldstyle-nums; padding-top:2px; }
+  .name { font-size:21px; line-height:1.4; display:inline; }
+  .meta { display:block; color:var(--muted); font-size:15px; font-style:italic; }
+  .none { color:var(--muted); font-style:italic; padding:14px 0; border-bottom:1px solid var(--line); }
+
+  .more { display:block; margin:12px 0 0; padding:0; background:none; border:0; cursor:pointer;
+    font:italic 17px/1.6 inherit; font-family:inherit; color:var(--ink); }
+  .more:hover { text-decoration:underline; text-underline-offset:4px; }
+  .more:focus-visible { outline:2px solid var(--ink); outline-offset:3px; }
+
+  @media (max-width:560px) {
+    .bar { grid-template-columns:1fr 1fr; }
+    .search { grid-column:1 / -1; grid-row:2; }
+    .post { grid-template-columns:1fr; gap:0; }
+    .try { justify-self:start; margin-top:8px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="bar">
+    <a class="home" id="home" href="#">Home</a>
+    <div class="search"><input id="q" type="search" placeholder="Search titles, tags, dates" aria-label="Search projects"></div>
+    <a class="updates" id="updates" href="#">Updates</a>
+  </div>
+
+  <p class="lede">Everything I build, from small experiments to full systems.</p>
+
+  <section id="minor-sec">
+    <h2>Minor Projects</h2>
+    <ul id="minor"></ul>
+    <button class="more" id="minor-more" type="button" hidden></button>
+  </section>
+
+  <section id="major-sec">
+    <h2>Major Projects</h2>
+    <ul id="major"></ul>
+    <button class="more" id="major-more" type="button" hidden></button>
+  </section>
+</div>
+<script>
+  // SETTINGS: where the top-left "Home" and top-right "Updates" links go.
+  const HOME_URL = "https://whysidd.carrd.co";
+  const UPDATES_URL = "https://isthiscoder.github.io/Engineering-Playbook/";
+
+  // How many newest projects each section shows before "View all".
+  const LIMIT = 5;
+
+  // EDIT HERE: one entry per project.
+  // kind: "minor" or "major"   date: YYYY-MM-DD   tags: comma-separated words (optional)
+  // url: link to the project write-up (the headline links here).
+  // demo: link to the live project (the "Try it out" button). Leave it out and no button shows.
+  // Order does not matter: newest shows first.
+  const projects = [
+    { title: "Intelligence Image", kind: "minor", date: "2026-10-12",
+      tags: "AI, computer vision", url: "https://example.com/intelligence-image",
+      demo: "https://example.com/intelligence-image-live" },
+    { title: "Smart Resume Parser", kind: "minor", date: "2026-11-03",
+      tags: "AI, NLP", url: "https://example.com/resume-parser",
+      demo: "https://example.com/resume-parser-live" },
+    { title: "Travel Experience Agent", kind: "major", date: "2026-12-20",
+      tags: "AI, agents, automation", url: "https://example.com/travel-agent",
+      demo: "https://example.com/travel-agent-live" }
+  ];
+
+  document.getElementById("home").href = HOME_URL;
+  document.getElementById("updates").href = UPDATES_URL;
+
+  const fmt = d => new Date(d + "T00:00:00").toLocaleDateString("en-GB",
+    { day: "numeric", month: "long", year: "numeric" });
+  const q = document.getElementById("q");
+  const sorted = projects.slice().sort((a, b) => b.date.localeCompare(a.date));
+
+  const open = { minor: false, major: false };
+  const names = { minor: "Minor", major: "Major" };
+
+  function fill(kind, f) {
+    const ul = document.getElementById(kind), sec = document.getElementById(kind + "-sec");
+    const btn = document.getElementById(kind + "-more");
+    ul.textContent = "";
+    const all = sorted.filter(p => p.kind === kind &&
+      (!f || [p.title, p.tags || "", fmt(p.date), p.date].join(" ").toLowerCase().includes(f)));
+    sec.hidden = !!f && !all.length;
+    btn.hidden = true;
+    if (!all.length) {
+      const li = document.createElement("li"); li.className = "none"; li.textContent = "Coming soon.";
+      ul.appendChild(li); return;
+    }
+    const limited = !f && !open[kind] && all.length > LIMIT;     // searching always shows every match
+    (limited ? all.slice(0, LIMIT) : all).forEach(p => {
+      const li = document.createElement("li"); li.className = "post";
+      const d = document.createElement("time"); d.className = "date"; d.dateTime = p.date; d.textContent = fmt(p.date);
+      const box = document.createElement("div");
+      const n = document.createElement("a"); n.className = "name"; n.href = p.url; n.rel = "noopener"; n.textContent = p.title;
+      box.appendChild(n);
+      if (p.tags) { const m = document.createElement("span"); m.className = "meta"; m.textContent = p.tags; box.appendChild(m); }
+      li.append(d, box);
+      if (p.demo) {
+        const t = document.createElement("a"); t.className = "try"; t.href = p.demo; t.rel = "noopener";
+        t.target = "_blank"; t.textContent = "Try it out"; li.appendChild(t);
+      }
+      ul.appendChild(li);
+    });
+    if (!f && all.length > LIMIT) {
+      btn.hidden = false;
+      btn.textContent = open[kind] ? "Show fewer" : "View all " + all.length + " " + names[kind] + " Projects \u2192";
+    }
+  }
+
+  function render() {
+    const f = q.value.trim().toLowerCase();
+    fill("minor", f); fill("major", f);
+  }
+  ["minor", "major"].forEach(k => document.getElementById(k + "-more").addEventListener("click", () => {
+    open[k] = !open[k]; render();
+  }));
+  q.addEventListener("input", render);
+  render();
+</script>
+</body>
+</html>
