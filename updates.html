@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="color-scheme" content="light only">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Updates</title>
+<meta name="description" content="What I am building right now, what is live, and what comes next.">
+<style>
+  :root { --ink:#1a1a1a; --muted:#767676; --line:#e6e6e6; }
+  * { box-sizing:border-box; }
+  [hidden] { display:none !important; }
+  body { margin:0; background:#fff; color:var(--ink); font-size:19px; line-height:1.7;
+    font-family:"Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, "Times New Roman", serif; }
+  a { color:inherit; text-decoration:none; }
+  .wrap { max-width:660px; margin:0 auto; padding:40px 24px 80px; }
+
+  /* top bar: Home | search | Updates */
+  .bar { display:grid; grid-template-columns:1fr minmax(0,240px) 1fr; align-items:center; gap:16px;
+    padding-bottom:20px; border-bottom:1px solid var(--line); }
+  .home { justify-self:start; font-size:17px; }
+  .updates { justify-self:end; font-size:20px; font-weight:700; text-align:right; }
+  .home:hover { text-decoration:underline; }
+  #q { width:100%; padding:6px 12px; font-family:inherit; font-style:italic; font-size:16px; line-height:1.5;
+    color:var(--ink); background:#fff; border:1px solid var(--line); border-radius:999px; text-align:center; }
+  #q:focus-visible, .home:focus-visible, .updates:focus-visible, .name:focus-visible, .try:focus-visible,
+  .more:focus-visible, .all:focus-visible { outline:2px solid var(--ink); outline-offset:3px; }
+
+  .lede { margin:48px 0 4px; color:var(--muted); font-style:italic; font-size:18px; }
+  .stamp { margin:0; color:var(--muted); font-size:15px; font-style:italic; }
+  .all { display:inline-block; margin-top:8px; font-size:17px; text-decoration:underline; text-underline-offset:4px; }
+
+  h2 { font-size:28px; line-height:1.3; margin:40px 0 8px; }
+  ul { list-style:none; margin:0; padding:0; border-top:1px solid var(--line); }
+  .post { display:grid; grid-template-columns:8.5rem 1fr auto; gap:16px; align-items:start; padding:14px 0;
+    border-bottom:1px solid var(--line); }
+  .post.nodate { grid-template-columns:1fr auto; }
+  .date { color:var(--muted); font-size:16px; font-variant-numeric:oldstyle-nums; padding-top:2px; }
+  .name { font-size:21px; line-height:1.4; }
+  a.name:hover { text-decoration:underline; text-underline-offset:4px; }
+  .sub { display:block; color:var(--muted); font-size:16px; font-style:italic; }
+  .log { font-size:19px; }
+  .try { align-self:center; white-space:nowrap; padding:4px 14px; font-size:15px; line-height:1.5;
+    border:1px solid var(--ink); border-radius:999px; }
+  .try:hover { background:var(--ink); color:#fff; }
+  .none { color:var(--muted); font-style:italic; padding:14px 0; border-bottom:1px solid var(--line); }
+  .more { display:block; margin:12px 0 0; padding:0; background:none; border:0; cursor:pointer;
+    font-family:inherit; font-style:italic; font-size:17px; line-height:1.6; color:var(--ink); }
+  .more:hover { text-decoration:underline; text-underline-offset:4px; }
+
+  @media (max-width:560px) {
+    .bar { grid-template-columns:1fr 1fr; }
+    .search { grid-column:1 / -1; grid-row:2; }
+    .post, .post.nodate { grid-template-columns:1fr; gap:0; }
+    .try { justify-self:start; margin-top:8px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="bar">
+    <a class="home" id="home" href="#">Home</a>
+    <div class="search"><input id="q" type="search" placeholder="Search updates" aria-label="Search updates"></div>
+    <a class="updates" href="">Updates</a>
+  </div>
+
+  <p class="lede">What I am building right now, what is live, and what comes next.</p>
+  <p class="stamp" id="stamp"></p>
+  <a class="all" id="all" href="#">See all projects &rarr;</a>
+
+  <section id="building-sec"><h2>Building now</h2><ul id="building"></ul></section>
+  <section id="live-sec"><h2>Live</h2><ul id="live"></ul></section>
+  <section id="next-sec"><h2>Next</h2><ul id="next"></ul></section>
+  <section id="log-sec"><h2>Recent log</h2><ul id="log"></ul>
+    <button class="more" id="log-more" type="button" hidden></button></section>
+</div>
+<script>
+  // SETTINGS
+  const HOME_URL = "https://whysidd.carrd.co";   // top-left "Home"
+  const PROJECTS_URL = "index.html";             // "See all projects" link
+  const LOG_LIMIT = 8;                           // newest log entries shown before "View full log"
+
+  // EDIT HERE. Dates are YYYY-MM-DD. Keep "building" to 1-3 items so the page stays honest and fresh.
+
+  // Projects you are working on right now. status: one short line. updated: when you last touched it.
+  const building = [
+    { title: "Document Q&A Bot", status: "Designing the architecture", updated: "2026-10-09" }
+  ];
+
+  // Finished projects people can try. url: write-up (optional). demo: live link (optional).
+  const live = [
+    { title: "Intelligence Image", date: "2026-10-05", tags: "AI, computer vision",
+      url: "https://example.com/intelligence-image", demo: "https://example.com/intelligence-image-live" }
+  ];
+
+  // Planned projects, in the order you plan to do them. note is optional.
+  const next = [
+    { title: "Travel Experience Agent", note: "Major project" },
+    { title: "Encrypted Chat App", note: "Minor project" }
+  ];
+
+  // One line per update. Newest shows first.
+  const log = [
+    { date: "2026-10-09", text: "Started the architecture for the Document Q&A Bot." },
+    { date: "2026-10-05", text: "Published the Intelligence Image demo." },
+    { date: "2026-09-28", text: "Set up this site." }
+  ];
+
+  // ---- no need to edit below ----
+  document.getElementById("home").href = HOME_URL;
+  document.getElementById("all").href = PROJECTS_URL;
+
+  const fmt = d => new Date(d + "T00:00:00").toLocaleDateString("en-GB",
+    { day: "numeric", month: "long", year: "numeric" });
+  const byDateDesc = key => (a, b) => b[key].localeCompare(a[key]);
+  const q = document.getElementById("q");
+  let logOpen = false;
+
+  const dates = [...building.map(b => b.updated), ...live.map(l => l.date), ...log.map(l => l.date)];
+  if (dates.length) document.getElementById("stamp").textContent = "Last updated " + fmt(dates.sort().pop());
+
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text) e.textContent = text; return e; };
+  const hit = (f, parts) => !f || parts.filter(Boolean).join(" ").toLowerCase().includes(f);
+
+  // row: { date, title, url, sub, demo }
+  function row(r) {
+    const li = el("li", "post" + (r.date ? "" : " nodate"));
+    if (r.date) { const t = el("time", "date", fmt(r.date)); t.dateTime = r.date; li.appendChild(t); }
+    const box = el("div");
+    let name;
+    if (r.url) { name = el("a", "name", r.title); name.href = r.url; name.rel = "noopener"; }
+    else name = el("span", r.title ? "name" : "name log", r.title || r.text);
+    box.appendChild(name);
+    if (r.sub) box.appendChild(el("span", "sub", r.sub));
+    li.appendChild(box);
+    if (r.demo) { const t = el("a", "try", "Try it out"); t.href = r.demo; t.rel = "noopener"; t.target = "_blank"; li.appendChild(t); }
+    return li;
+  }
+
+  function section(id, rows, emptyText, f) {
+    const ul = document.getElementById(id), sec = document.getElementById(id + "-sec");
+    ul.textContent = "";
+    sec.hidden = !!f && !rows.length;
+    if (!rows.length) { ul.appendChild(el("li", "none", emptyText)); return; }
+    rows.forEach(r => ul.appendChild(row(r)));
+  }
+
+  function render() {
+    const f = q.value.trim().toLowerCase();
+    section("building",
+      building.filter(b => hit(f, [b.title, b.status, fmt(b.updated), b.updated]))
+        .sort(byDateDesc("updated")).map(b => ({ date: b.updated, title: b.title, sub: b.status })),
+      "Nothing in progress right now.", f);
+    section("live",
+      live.filter(l => hit(f, [l.title, l.tags, fmt(l.date), l.date]))
+        .sort(byDateDesc("date")).map(l => ({ date: l.date, title: l.title, url: l.url, sub: l.tags, demo: l.demo })),
+      "Nothing live yet.", f);
+    section("next",
+      next.filter(n => hit(f, [n.title, n.note])).map(n => ({ title: n.title, sub: n.note })),
+      "Nothing planned yet.", f);
+
+    const entries = log.filter(l => hit(f, [l.text, fmt(l.date), l.date])).sort(byDateDesc("date"));
+    const limited = !f && !logOpen && entries.length > LOG_LIMIT;
+    section("log", (limited ? entries.slice(0, LOG_LIMIT) : entries).map(l => ({ date: l.date, text: l.text })),
+      "No updates yet.", f);
+    const btn = document.getElementById("log-more");
+    btn.hidden = f || entries.length <= LOG_LIMIT;
+    btn.textContent = logOpen ? "Show fewer" : "View full log (" + entries.length + ") \u2192";
+  }
+
+  document.getElementById("log-more").addEventListener("click", () => { logOpen = !logOpen; render(); });
+  q.addEventListener("input", render);
+  render();
+</script>
+</body>
+</html>
