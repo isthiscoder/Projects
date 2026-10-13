@@ -1,0 +1,18 @@
+---
+layout: default
+---
+<article class="article">
+  <a class="back" href="{{ '/' | relative_url }}">&larr; All projects</a>
+  <h1>{{ page.title }}</h1>
+  <p class="byline">
+    {{ page.kind | capitalize }} project{% if page.date %} | {{ page.date | date: "%-d %B %Y" }}{% endif %}{% if page.tags.size > 0 %} | {{ page.tags | join: ", " }}{% endif %}
+  </p>
+  <div class="content">
+    {{ content }}
+  </div>
+  <div class="btns">
+    {% if page.demo %}<a class="btn primary" href="{{ page.demo }}" target="_blank" rel="noopener">Try it out</a>{% endif %}
+    {% if page.build %}<a class="btn" href="{{ page.build }}" target="_blank" rel="noopener">How I built it</a>{% endif %}
+  </div>
+  <p class="end"><a href="{{ '/' | relative_url }}">&larr; All projects</a></p>
+</article>

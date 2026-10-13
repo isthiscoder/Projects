@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="color-scheme" content="light only">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}</title>
+<meta name="description" content="{{ page.description | default: site.description }}">
+<link rel="stylesheet" href="{{ '/assets/style.css' | relative_url }}">
+</head>
+<body>
+<div class="wrap">
+  <div class="bar">
+    <a class="home" href="{{ site.home_url }}">Home</a>
+    <form class="search" action="{{ '/' | relative_url }}" method="get" role="search">
+      <input id="q" name="q" type="search" placeholder="Search projects, tags" aria-label="Search projects" autocomplete="off">
+    </form>
+    <a class="title" href="{{ '/' | relative_url }}">Projects</a>
+  </div>
+  {{ content }}
+</div>
+<script>
+  (function () {
+    var q = document.getElementById("q"); var rows = document.querySelectorAll(".row");
+    if (!rows.length) return;
+    var param = new URLSearchParams(location.search).get("q");
+    function run() {
+      var f = q.value.trim().toLowerCase();
+      document.querySelectorAll(".sec").forEach(function (sec) {
+        var any = false;
+        sec.querySelectorAll(".row").forEach(function (r) {
+          var ok = !f || r.getAttribute("data-s").indexOf(f) !== -1;
+          r.hidden = !ok; if (ok) any = true;
+        });
+        var empty = sec.querySelector(".none"); if (empty) empty.hidden = any;
+      });
+    }
+    q.addEventListener("input", run);
+    q.form.addEventListener("submit", function (e) { e.preventDefault(); });
+    if (param) q.value = param;
+    run();
+  })();
+</script>
+</body>
+</html>

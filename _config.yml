@@ -1,0 +1,16 @@
+title: Projects
+description: Everything I build, from small experiments to full systems.
+url: "https://isthiscoder.github.io"
+baseurl: "/Projects"
+home_url: "https://mavsidd.carrd.co"
+updates_url: "updates.html"
+author: Siddharth Singh
+
+markdown: kramdown
+highlighter: rouge
+permalink: /:title/
+future: true
+
+exclude:
+  - README.md
+  - LICENSE
