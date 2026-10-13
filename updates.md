@@ -3,7 +3,7 @@ layout: default
 title: Updates
 permalink: /updates/
 ---
-<p class="lede">What I am building right now, what is live, and what I have improved.</p>
+<p class="lede">Whats Live (Projects) & The Projects Log.</p>
 <p class="stamp">Last updated {{ site.time | date: "%-d %B %Y" }}</p>
 
 <section class="u-sec">
