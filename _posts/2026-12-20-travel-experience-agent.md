@@ -5,7 +5,7 @@ date: 2026-12-20
 kind: major
 tags: [AI, agents, automation]
 demo: "https://example.com/travel-agent-live"
-build: "https://isthiscoder.github.io/Projects-Architecture/"
+build: "https://architecture.isidd.dev/"
 ---
 Replace this with a short paragraph: what the project does and why you built it.
 
