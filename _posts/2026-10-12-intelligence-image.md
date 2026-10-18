@@ -5,7 +5,7 @@ date: 2026-10-12
 kind: minor
 tags: [AI, computer vision]
 demo: "https://example.com/intelligence-image-live"
-build: "https://isthiscoder.github.io/Projects-Architecture/"
+build: "https://architecture.isidd.dev/"
 ---
 Replace this with a short paragraph: what the project does and why you built it.
 
