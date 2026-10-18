@@ -1,7 +1,7 @@
 title: Projects
 description: Everything I build, from small experiments to full systems.
-url: "https://isthiscoder.github.io"
-baseurl: "/Projects"
+url: "https://projects.isidd.dev"
+baseurl: ""
 home_url: "https://mavsidd.carrd.co"
 updates_url: "updates.html"
 author: Siddharth Singh
