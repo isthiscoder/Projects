@@ -1,0 +1,9 @@
+{%- comment -%} Minutes to read: uses `read:` from the post if set, otherwise counts words (200 per minute). Pass post=… {%- endcomment -%}
+{%- if include.post.read -%}
+  {%- assign mins = include.post.read -%}
+{%- else -%}
+  {%- assign words = include.post.content | strip_html | number_of_words -%}
+  {%- assign mins = words | plus: 199 | divided_by: 200 -%}
+  {%- if mins < 1 -%}{%- assign mins = 1 -%}{%- endif -%}
+{%- endif -%}
+{{ mins }} min read

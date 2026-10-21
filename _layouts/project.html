@@ -2,17 +2,30 @@
 layout: default
 ---
 <article class="article">
-  <a class="back" href="{{ '/' | relative_url }}">&larr; All projects</a>
-  <h1>{{ page.title }}</h1>
-  <p class="byline">
-    {{ page.kind | capitalize }} project{% if page.date %} | {{ page.date | date: "%-d %B %Y" }}{% endif %}{% if page.tags.size > 0 %} | {{ page.tags | join: ", " }}{% endif %}
+  <p class="meta article-meta">
+    <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%B %-d, %Y" }}</time>
+    <span>{% include read-time.html post=page %}</span>
+    <span>{{ page.author | default: site.author }}</span>
   </p>
-  <div class="content">
+  <h1 class="a-title">{{ page.title }}</h1>
+  {%- if page.subtitle %}<p class="a-sub">{{ page.subtitle }}</p>{% endif %}
+  <p class="tags">{% if page.kind %}<span class="kind-tag"><a href="{{ '/' | append: page.kind | append: '/' | relative_url }}">{{ page.kind | capitalize }} project</a></span>{% endif %}{% for t in page.tags %}<span>{{ t }}</span>{% endfor %}</p>
+
+  {%- if page.demo or page.build or page.code %}
+  <p class="actions">
+    {%- if page.demo %}<a class="btn primary" href="{{ page.demo }}" rel="noopener">Try it out</a>{% endif %}
+    {%- if page.build %}<a class="btn" href="{{ page.build }}" rel="noopener">How I built it</a>{% endif %}
+    {%- if page.code %}<a class="btn" href="{{ page.code }}" rel="noopener">Code</a>{% endif %}
+  </p>
+  {%- endif %}
+
+  <div class="prose">
     {{ content }}
   </div>
-  <div class="btns">
-    {% if page.demo %}<a class="btn primary" href="{{ page.demo }}" target="_blank" rel="noopener">Try it out</a>{% endif %}
-    {% if page.build %}<a class="btn" href="{{ page.build }}" target="_blank" rel="noopener">How I built it</a>{% endif %}
-  </div>
-  <p class="end"><a href="{{ '/' | relative_url }}">&larr; All projects</a></p>
+
+  <nav class="post-nav" aria-label="More projects">
+    {%- if page.next %}<a class="pn-next" href="{{ page.next.url | relative_url }}"><small>Newer</small>{{ page.next.title }}</a>{% else %}<span></span>{% endif %}
+    {%- if page.previous %}<a class="pn-prev" href="{{ page.previous.url | relative_url }}"><small>Older</small>{{ page.previous.title }}</a>{% endif %}
+  </nav>
+  <p class="back"><a href="{{ '/' | relative_url }}">&larr; All projects</a></p>
 </article>

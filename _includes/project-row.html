@@ -1,0 +1,16 @@
+{%- comment -%} One project in a list. Params: post, n (number shown on the left) {%- endcomment -%}
+{%- assign pr = include.post -%}
+<li>
+  <div class="entry">
+    <span class="num" aria-hidden="true">{% if include.n < 10 %}0{% endif %}{{ include.n }}</span>
+    <span class="e-body">
+      <a class="e-title" href="{{ pr.url | relative_url }}">{{ pr.title }}</a>
+      <span class="meta">
+        <time datetime="{{ pr.date | date_to_xmlschema }}">{{ pr.date | date: "%B %-d, %Y" }}</time>
+        <span>{% include read-time.html post=pr %}</span>
+        <span>{{ pr.author | default: site.author }}</span>
+      </span>
+    </span>
+    {%- if pr.demo %}<a class="try" href="{{ pr.demo }}" rel="noopener">Try it out</a>{% endif %}
+  </div>
+</li>

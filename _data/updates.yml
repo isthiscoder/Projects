@@ -1,0 +1,34 @@
+# ── Updates page (projects.isidd.dev/updates/) ──
+# Edit these lists; the page redesigns itself. Newest first in the changelog.
+
+# What you're actively building
+building:
+  - project: "Travel Experience Agent"
+    stage: "Building the booking flow"
+    progress: 60            # percent, optional
+  - project: "Document Q&A Bot"
+    stage: "Designing the architecture"
+    progress: 20
+
+# Finished projects people can try
+live:
+  - project: "Intelligence Image"
+    note: "Explains what's in any image, in plain language."
+    url: "https://example.com/intelligence-image-live"
+
+# The log: date (YYYY-MM-DD), project, what changed
+changelog:
+  - date: 2026-10-12
+    project: "Travel Experience Agent"
+    change: "v0.3: cut response time by 40%"
+  - date: 2026-10-05
+    project: "Intelligence Image"
+    change: "Added batch upload"
+  - date: 2026-09-28
+    project: "Projects site"
+    change: "Set up the site"
+
+# Coming next
+next:
+  - project: "Encrypted Chat App"
+    kind: "Minor project"

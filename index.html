@@ -1,25 +1,38 @@
 ---
 layout: default
 ---
-<p class="lede">End to end Projects Deployed & Documented Try it out.</p>
+{%- comment -%}
+  Home: the newest 5 Major and 5 Minor projects (set home_per_kind in _config.yml),
+  each with an "Open all" link to its full, paginated list at /major/ or /minor/.
+{%- endcomment -%}
+<header class="intro">
+  <h1 class="page-title">{{ site.title }}</h1>
+  <p class="lede">{{ site.description }}</p>
+  <p class="count">{{ site.posts.size }} {% if site.posts.size == 1 %}project{% else %}projects{% endif %}</p>
+</header>
 
-{% assign order = "minor,major" | split: "," %}
-{% for kind in order %}
-<section class="sec">
-  <h2 class="section">{{ kind | capitalize }} Projects</h2>
-  <ul class="list">
-  {% assign items = site.posts | where: "kind", kind %}
-  {% for p in items %}
-    <li class="row" data-s="{{ p.title | downcase | escape }} {{ p.tags | join: ' ' | downcase | escape }}">
-      <span class="date">{{ p.date | date: "%-d %b %Y" }}</span>
-      <div>
-        <a class="name" href="{{ p.url | relative_url }}">{{ p.title }}</a>
-        {% if p.tags.size > 0 %}<span class="tags">{{ p.tags | join: ", " }}</span>{% endif %}
-      </div>
-      {% if p.demo %}<a class="try" href="{{ p.demo }}" target="_blank" rel="noopener">Try it out</a>{% else %}<span></span>{% endif %}
-    </li>
-  {% endfor %}
-    <li class="none"{% if items.size > 0 %} hidden{% endif %}>Coming soon.</li>
-  </ul>
-</section>
-{% endfor %}
+<div data-listing>
+{%- assign kinds = "major,minor" | split: "," %}
+{%- for kind in kinds %}
+  {%- assign items = site.posts | where: "kind", kind %}
+  <section class="kind-block" aria-labelledby="h-{{ kind }}">
+    <h2 class="kind-title" id="h-{{ kind }}">{{ kind | capitalize }} projects <span class="kind-count">{{ items.size }}</span></h2>
+    {%- if items.size > 0 %}
+    <ol class="entries">
+      {%- for pr in items limit: site.home_per_kind %}
+        {%- assign n = items.size | minus: forloop.index0 %}
+        {%- include project-row.html post=pr n=n %}
+      {%- endfor %}
+    </ol>
+    {%- if items.size > site.home_per_kind %}
+    <a class="open-more" href="{{ '/' | append: kind | append: '/' | relative_url }}">Open all {{ items.size }} {{ kind }} projects</a>
+    {%- else %}
+    <a class="open-more" href="{{ '/' | append: kind | append: '/' | relative_url }}">Open {{ kind }} projects</a>
+    {%- endif %}
+    {%- else %}
+    <p class="none">Coming soon.</p>
+    {%- endif %}
+  </section>
+{%- endfor %}
+</div>
+<ul class="entries" id="results" hidden></ul>

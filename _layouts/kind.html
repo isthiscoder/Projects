@@ -1,0 +1,55 @@
+---
+layout: default
+---
+{%- comment -%}
+  Every project of one kind (page.kind = major | minor), newest first, 12 per page.
+  Page files live at /major/, /major/page2/ … /major/page10/ (same for minor).
+  Need more than 10 pages? Copy the last page file and bump page_num and permalink.
+{%- endcomment -%}
+{%- assign items = site.posts | where: "kind", page.kind %}
+{%- assign per = site.per_page %}
+{%- assign total = items.size %}
+{%- assign pages = total | plus: per | minus: 1 | divided_by: per %}
+{%- if pages < 1 %}{% assign pages = 1 %}{% endif %}
+{%- assign offset = page.page_num | minus: 1 | times: per %}
+{%- assign base = '/' | append: page.kind | append: '/' %}
+
+<header class="intro">
+  <p class="crumb"><a href="{{ '/' | relative_url }}">Projects</a></p>
+  <h1 class="page-title">{{ page.kind | capitalize }} projects</h1>
+  <p class="count">{{ total }} {% if total == 1 %}project{% else %}projects{% endif %}{% if pages > 1 %} · page {{ page.page_num }} of {{ pages }}{% endif %}</p>
+</header>
+
+<div data-listing>
+{%- if offset < total %}
+<ol class="entries" id="list">
+  {%- for pr in items limit: per offset: offset %}
+    {%- assign n = total | minus: offset | minus: forloop.index0 %}
+    {%- include project-row.html post=pr n=n %}
+  {%- endfor %}
+</ol>
+{%- else %}
+<p class="none">No more projects here. <a href="{{ base | relative_url }}">Back to the first page</a>.</p>
+{%- endif %}
+
+{%- if pages > 1 %}
+<nav class="pager" aria-label="Pages">
+  {%- if page.page_num > 1 %}
+    {%- assign prev = page.page_num | minus: 1 %}
+    <a class="newer" href="{% if prev == 1 %}{{ base | relative_url }}{% else %}{{ base | append: 'page' | append: prev | append: '/' | relative_url }}{% endif %}">&larr; Newer</a>
+  {%- else %}<span class="newer"></span>{% endif %}
+  <span class="pages">
+    {%- for i in (1..pages) %}
+      {%- if i == page.page_num %}<span aria-current="page">{{ i }}</span>
+      {%- elsif i == 1 %}<a href="{{ base | relative_url }}">1</a>
+      {%- else %}<a href="{{ base | append: 'page' | append: i | append: '/' | relative_url }}">{{ i }}</a>{% endif %}
+    {%- endfor %}
+  </span>
+  {%- if page.page_num < pages %}
+    {%- assign nxt = page.page_num | plus: 1 %}
+    <a class="older" href="{{ base | append: 'page' | append: nxt | append: '/' | relative_url }}">Older &rarr;</a>
+  {%- else %}<span class="older"></span>{% endif %}
+</nav>
+{%- endif %}
+</div>
+<ul class="entries" id="results" hidden></ul>

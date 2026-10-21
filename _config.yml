@@ -2,14 +2,18 @@ title: Projects
 description: Everything I build, from small experiments to full systems.
 url: "https://projects.isidd.dev"
 baseurl: ""
-home_url: "https://projects.isidd.dev"
-updates_url: "updates.html"
+home_url: "https://isidd.dev"
 author: Siddharth Singh
+github: "https://github.com/isthiscoder"
 
 markdown: kramdown
 highlighter: rouge
 permalink: /:title/
 future: true
+
+# Home page shows the newest 5 of each kind; /major/ and /minor/ list them all, 12 per page.
+home_per_kind: 5
+per_page: 12
 
 exclude:
   - README.md

@@ -1,0 +1,80 @@
+---
+layout: default
+title: Updates
+permalink: /updates/
+---
+{%- assign u = site.data.updates -%}
+<header class="intro">
+  <p class="crumb"><a href="{{ '/' | relative_url }}">Projects</a></p>
+  <h1 class="page-title">Updates</h1>
+  <p class="lede">What I'm building, what's live, and everything that changed.</p>
+  <p class="count">Last updated {% if u.changelog.size > 0 %}{{ u.changelog.first.date | date: "%B %-d, %Y" }}{% else %}{{ site.time | date: "%B %-d, %Y" }}{% endif %}</p>
+</header>
+
+<ul class="snapshot" aria-label="At a glance">
+  <li><span class="snap-n">{{ u.building.size }}</span><span class="snap-l">Building now</span></li>
+  <li><span class="snap-n">{{ u.live.size }}</span><span class="snap-l">Live</span></li>
+  <li><span class="snap-n">{{ u.changelog.size }}</span><span class="snap-l">Changes logged</span></li>
+</ul>
+
+{%- if u.building.size > 0 %}
+<section class="u-block" aria-labelledby="h-building">
+  <h2 class="u-title" id="h-building"><span class="status building">Building</span>Building now</h2>
+  <ul class="u-rows">
+    {%- for b in u.building %}
+    <li class="u-row">
+      <span class="u-name">{{ b.project }}</span>
+      <span class="u-note">{{ b.stage }}</span>
+      {%- if b.progress %}
+      <span class="bar" role="img" aria-label="{{ b.progress }}% done"><span style="width: {{ b.progress }}%"></span></span>
+      <span class="pct">{{ b.progress }}%</span>
+      {%- endif %}
+    </li>
+    {%- endfor %}
+  </ul>
+</section>
+{%- endif %}
+
+{%- if u.live.size > 0 %}
+<section class="u-block" aria-labelledby="h-live">
+  <h2 class="u-title" id="h-live"><span class="status live">Live</span>Try it now</h2>
+  <ul class="u-rows">
+    {%- for l in u.live %}
+    <li class="u-row">
+      <span class="u-name">{{ l.project }}</span>
+      {%- if l.note %}<span class="u-note">{{ l.note }}</span>{% endif %}
+      {%- if l.url %}<a class="try" href="{{ l.url }}" rel="noopener">Try it out</a>{% endif %}
+    </li>
+    {%- endfor %}
+  </ul>
+</section>
+{%- endif %}
+
+{%- if u.changelog.size > 0 %}
+<section class="u-block" aria-labelledby="h-log">
+  <h2 class="u-title" id="h-log"><span class="status log">Log</span>Changelog</h2>
+  {%- assign months = u.changelog | group_by_exp: "c", "c.date | date: '%B %Y'" %}
+  {%- for m in months %}
+  <h3 class="month">{{ m.name }}</h3>
+  <ol class="timeline">
+    {%- for c in m.items %}
+    <li>
+      <time datetime="{{ c.date | date: '%Y-%m-%d' }}">{{ c.date | date: "%b %-d" }}</time>
+      <span class="t-body"><span class="u-name">{{ c.project }}</span><span class="t-change">{{ c.change }}</span></span>
+    </li>
+    {%- endfor %}
+  </ol>
+  {%- endfor %}
+</section>
+{%- endif %}
+
+{%- if u.next.size > 0 %}
+<section class="u-block" aria-labelledby="h-next">
+  <h2 class="u-title" id="h-next"><span class="status next">Next</span>Coming next</h2>
+  <ul class="u-rows">
+    {%- for n in u.next %}
+    <li class="u-row"><span class="u-name">{{ n.project }}</span>{% if n.kind %}<span class="u-note">{{ n.kind }}</span>{% endif %}</li>
+    {%- endfor %}
+  </ul>
+</section>
+{%- endif %}
